@@ -1,0 +1,72 @@
+CREATE ROLE SEC_MGR_ROLE;
+GRANT ADMINISTER KEY MANAGEMENT TO SEC_MGR_ROLE;
+GRANT SELECT ON gv_$encryption_wallet TO SEC_MGR_ROLE;
+GRANT SELECT ON gv_$encryption_keys TO SEC_MGR_ROLE;
+
+/
+-- TAO KEY STORE
+ADMINISTER KEY MANAGEMENT
+CREATE KEYSTORE 'C:/app/wuuho/product/21c/admin/XE/wallet'
+IDENTIFIED BY welcome1;
+/
+-- REKEY
+
+ADMINISTER KEY MANAGEMENT SET KEY 
+USING TAG 'pdb'
+FORCE KEYSTORE
+IDENTIFIED BY welcome2 
+WITH BACKUP USING 'pdb_create';
+
+
+
+/
+-- KIEM TRA TRANG THAI KEYSOTRE
+SELECT wrl_parameter, wallet_type, status
+FROM sys.gv_$encryption_wallet;
+
+
+-- TAO MASTER KEY
+ADMINISTER KEY MANAGEMENT 
+CREATE KEY 
+USING TAG 'pdb'
+IDENTIFIED BY welcome1
+WITH BACKUP USING 'pdb_create';
+ 
+/
+-- SELECT MASTER KEY 
+SELECT TAG, KEY_ID
+FROM gv_$encryption_keys;
+/
+-- SU DUNG MASTER KEY
+ADMINISTER KEY MANAGEMENT
+USE KEY 'AQk/ie4g2U/6v1BbRepGZwYAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+USING TAG 'pdb'
+IDENTIFIED BY welcome2
+WITH BACKUP USING 'pdb_create';
+/
+
+-- 
+
+--- ECNRYPT EXISTS COLUMN
+EXECUTE dbms_redefinition.can_redef_table ('SCHEMA_USER', 'NHANVIEN');
+/
+CREATE TABLE SCHEMA_USER.NHANVIEN_STAGE as SELECT * FROM SCHEMA_USER.NHANVIEN;
+/
+ALTER TABLE SCHEMA_USER.NHANVIEN_STAGE MODIFY (LUONG ENCRYPT, PHUCAP ENCRYPT);
+/
+EXECUTE dbms_redefinition.start_redef_table ('SCHEMA_USER', 'NHANVIEN','NHANVIEN_STAGE');
+/
+EXECUTE dbms_redefinition.finish_redef_table ('SCHEMA_USER', 'NHANVIEN',  'NHANVIEN_STAGE');
+
+/
+-- KIEM TRA
+
+SELECT owner, table_name, column_name , encryption_alg, salt
+FROM dba_encrypted_columns;
+/
+
+
+
+
+
+

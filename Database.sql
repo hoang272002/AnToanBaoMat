@@ -1,0 +1,109 @@
+-- TAO SCHEMA USER
+CREATE USER SCHEMA_USER;
+GRANT CREATE ANY TABLE TO SCHEMA_USER;
+ALTER USER SCHEMA_USER QUOTA UNLIMITED ON USERS;
+/
+---- TAO DATABASE
+create table SCHEMA_USER.NHANVIEN
+(
+    MaNV char(4) primary key,
+    TenNV varchar2(25),
+    Phai varchar2(3),
+    NgaySinh date, 
+    DiaChi varchar2(50),
+    SoDT char(11),
+    Luong number(12,2),
+    PhuCap number(5,2),
+    VaiTro varchar2(5),
+    QuanLy char(4),
+    PhongBan char(4)
+)
+/
+create table SCHEMA_USER.PHONGBAN
+(
+    MaPB char(4) primary key,
+    TenPB varchar2(25),
+    TruongPhong char(4)
+)
+/
+create table SCHEMA_USER.TAIKHOAN
+(
+    MaNV char(4) primary key,
+    MatKhau varchar2(25)
+)
+/
+create table SCHEMA_USER.DEAN
+(
+    MaDA char(4) primary key,
+    TenDA varchar2(25),
+    NgayBD date,
+    PhongBan char(4),
+    TruongDA char(4)
+)
+/
+create table SCHEMA_USER.PhanCong
+(
+    MaNV char(4),
+    MaDA char(4),
+    ThoiGian date,
+    QuanLy char(4),
+    PhongBan char(4),
+    primary key(MaNV, MaDA)
+)
+/
+-- FOREIGN KEY
+ALTER TABLE SCHEMA_USER.PhanCong
+ADD CONSTRAINT fk_PhanCong_NhanVien
+FOREIGN KEY (MaNV)
+REFERENCES SCHEMA_USER.NHANVIEN(MaNV);
+/
+ALTER TABLE SCHEMA_USER.PhanCong
+ADD CONSTRAINT fk_PhanCong_DeAn
+FOREIGN KEY (MaDA)
+REFERENCES SCHEMA_USER.DEAN(MaDA);
+/
+ALTER TABLE SCHEMA_USER.PhanCong
+ADD CONSTRAINT fk_PhanCong_NhanVien_01
+FOREIGN KEY (QuanLy)
+REFERENCES SCHEMA_USER.NHANVIEN(MaNV);
+/
+ALTER TABLE SCHEMA_USER.PhanCong
+ADD CONSTRAINT fk_PhanCong_PhongBan
+FOREIGN KEY (PhongBan)
+REFERENCES SCHEMA_USER.PHONGBAN(MaPB);
+/
+ALTER TABLE SCHEMA_USER.DeAn
+ADD CONSTRAINT f_DeAn_PhongBan
+FOREIGN KEY (PhongBan)
+REFERENCES SCHEMA_USER.PHONGBAN(MaPB);
+/
+ALTER TABLE SCHEMA_USER.DeAn
+ADD CONSTRAINT f_DeAn_NhanVien
+FOREIGN KEY (TruongDA)
+REFERENCES SCHEMA_USER.NHANVIEN(MaNV);
+/
+ALTER TABLE SCHEMA_USER.PhongBan
+ADD CONSTRAINT fk_PhongBan_NhanVien
+FOREIGN KEY (TruongPhong)
+REFERENCES SCHEMA_USER.NHANVIEN(MaNV);
+/
+ALTER TABLE SCHEMA_USER.TAIKHOAN
+ADD CONSTRAINT fk_TAIKHOAN_NhanVien
+FOREIGN KEY (MaNV)
+REFERENCES SCHEMA_USER.NHANVIEN(MaNV);
+/
+ALTER TABLE SCHEMA_USER.NHANVIEN
+ADD CONSTRAINT fk_NHANVIEN_PhongBan
+FOREIGN KEY (PhongBan)
+REFERENCES SCHEMA_USER.PHONGBAN(MaPB);
+/
+ALTER TABLE SCHEMA_USER.NHANVIEN
+ADD CONSTRAINT fk_NHANVIEN_NhanVien
+FOREIGN KEY (QuanLy)
+REFERENCES SCHEMA_USER.NHANVIEN(MaNV);
+/
+
+
+
+
+
